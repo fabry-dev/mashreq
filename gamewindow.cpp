@@ -364,6 +364,7 @@ void gameWindow::startSpin()
 
 
 
+    qDebug()<<"win: "<<voucherValue;
 
 
 
@@ -498,7 +499,7 @@ void gameWindow::rotateWheel()
         rotationEffect(txt,rect);
 
 
-        if((abs((rect->y())-(spinScene->height())/2+(rect->height()/2))<8))
+        if((abs((rect->y())-(spinScene->height()-rect->height())/2)<8))
         {
             active = txt->toPlainText();
 
@@ -506,7 +507,7 @@ void gameWindow::rotateWheel()
             {
                 lastActive=active;
                 sp->loadFile(PATH+"top.wav");
-                // qDebug()<<"top"<<active;
+                 qDebug()<<"top"<<active;
             }
         }
 
