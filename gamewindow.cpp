@@ -19,24 +19,24 @@
 
 
 #define firstName_x0 115
-#define firstName_y0 (740-35)
+#define firstName_y0 (740-25)
 #define firstName_x1 530
-#define firstName_y1 (770-10)
+#define firstName_y1 (770+10)
 
 #define lastName_x0 560
-#define lastName_y0 (740-35)
+#define lastName_y0 (740-25)
 #define lastName_x1 970
-#define lastName_y1 (770-10)
+#define lastName_y1 (770+10)
 
 #define phone_x0 115
-#define phone_y0 (895-35)
+#define phone_y0 (895-25)
 #define phone_x1 530
-#define phone_y1 (925-10)
+#define phone_y1 (925+10)
 
 #define email_x0 560
-#define email_y0 (895-35)
+#define email_y0 (895-25)
 #define email_x1 970
-#define email_y1 (925-10)
+#define email_y1 (925+10)
 
 #define tryagain_x0 280
 #define tryagain_y0 1250
@@ -46,14 +46,14 @@
 #define minNameSize 3
 #define maxNameSize 20
 #define minPhoneSize 8
-#define maxPhoneSize 12
+#define maxPhoneSize 16
 #define minEmailSize 5
-#define maxEmailSize 16
+#define maxEmailSize 30
 
 
 
 
-QStringList vouchers = QStringList() <<"100"<<"0"<<"150"<<"25"<<"200"<<"50"<<"100"<<"0"<<"150"<<"50"<<"200"<<"100"<<"0"<<"150"<<"25";
+QStringList vouchers = QStringList() <<"100"<<"0"<<"150"<<"25"<<"200"<<"50"<<"100"<<"0"<<"150"<<"50"<<"200"<<"100"<<"0"<<"150"<<"25"<<"200";
 
 
 
@@ -95,15 +95,16 @@ gameWindow::gameWindow(QWidget *parent, QString PATH):QLabel(parent),PATH(PATH)
     firstNameLbl = new QLabel(this);
     firstNameLbl->resize(firstName_x1-firstName_x0,firstName_y1-firstName_y0);
     firstNameLbl->move(firstName_x0,firstName_y0);
-    firstNameLbl->setAlignment(Qt::AlignLeft);
+    firstNameLbl->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     firstNameLbl->setFont(font);
     firstNameLbl->setStyleSheet("QLabel { color : black; }");
     firstNameLbl->hide();
+    //firstNameLbl->setStyleSheet("border: 1px solid black");
 
     lastNameLbl = new QLabel(this);
     lastNameLbl->resize(lastName_x1-lastName_x0,lastName_y1-lastName_y0);
     lastNameLbl->move(lastName_x0,lastName_y0);
-    lastNameLbl->setAlignment(Qt::AlignLeft);
+    lastNameLbl->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     lastNameLbl->setFont(font);
     lastNameLbl->setStyleSheet("QLabel { color : black; }");
     lastNameLbl->hide();
@@ -111,7 +112,7 @@ gameWindow::gameWindow(QWidget *parent, QString PATH):QLabel(parent),PATH(PATH)
     phoneLbl = new QLabel(this);
     phoneLbl->resize(phone_x1-phone_x0,phone_y1-phone_y0);
     phoneLbl->move(phone_x0,phone_y0);
-    phoneLbl->setAlignment(Qt::AlignLeft);
+    phoneLbl->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     phoneLbl->setFont(font);
     phoneLbl->setStyleSheet("QLabel { color : black; }");
     phoneLbl->hide();
@@ -120,7 +121,7 @@ gameWindow::gameWindow(QWidget *parent, QString PATH):QLabel(parent),PATH(PATH)
     emailLbl = new QLabel(this);
     emailLbl->resize(email_x1-email_x0,email_y1-email_y0);
     emailLbl->move(email_x0,email_y0);
-    emailLbl->setAlignment(Qt::AlignLeft);
+    emailLbl->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     emailLbl->setFont(font);
     emailLbl->setStyleSheet("QLabel { color : black; }");
     emailLbl->hide();
@@ -353,7 +354,6 @@ void gameWindow::startSpin()
     else
         voucherValue = "200";
 
-
     wheelTimer->start(2);
 }
 
@@ -466,7 +466,7 @@ void gameWindow::rotateWheel()
     QString active = "";
     for (auto txt:wheelTexts)
     {
-        txt->moveBy(0,5);
+        txt->moveBy(0,10);
         if(txt->y()>((wheelTexts.size())*(txt->boundingRect().height()))/2)
             txt->moveBy(0,-((wheelTexts.size())*(txt->boundingRect().height())));
 
@@ -478,14 +478,14 @@ void gameWindow::rotateWheel()
 
     wheelCount++;
 
-    if (wheelCount >  25)
+    if (wheelCount >  27)
     {
         wheelTimer->setInterval(wheelTimer->interval()+1);
         wheelCount = 0;
     }
 
 
-    if((wheelTimer->interval()>10)&&(active == "AED "+voucherValue))
+    if((wheelTimer->interval()>8)&&(active == "AED "+voucherValue))
     {
         sp->stop();
         wheelTimer->stop();
@@ -511,6 +511,7 @@ void gameWindow::getCharacter(QString c)
             {
                 firstNameTxt = firstNameTxt.remove(firstNameTxt.size()-1,1);
                 firstNameLbl->setText(firstNameTxt);
+                updLbl(firstNameLbl);
             }
             return;
         }
@@ -520,6 +521,7 @@ void gameWindow::getCharacter(QString c)
             {
                 firstNameTxt.append(" ");
                 firstNameLbl->setText(firstNameTxt);
+                updLbl(firstNameLbl);
             }
             return;
         }
@@ -530,6 +532,7 @@ void gameWindow::getCharacter(QString c)
                 firstNameTxt.append(c);
                 firstNameTxt = toCamelCase(firstNameTxt);
                 firstNameLbl->setText(firstNameTxt);
+                updLbl(firstNameLbl);
             }
             return;
         }
@@ -548,6 +551,7 @@ void gameWindow::getCharacter(QString c)
             {
                 lastNameTxt = lastNameTxt.remove(lastNameTxt.size()-1,1);
                 lastNameLbl->setText(lastNameTxt);
+                updLbl(lastNameLbl);
             }
             return;
         }
@@ -557,6 +561,7 @@ void gameWindow::getCharacter(QString c)
             {
                 lastNameTxt.append(" ");
                 lastNameLbl->setText(lastNameTxt);
+                updLbl(lastNameLbl);
             }
             return;
         }
@@ -567,6 +572,7 @@ void gameWindow::getCharacter(QString c)
                 lastNameTxt.append(c);
                 lastNameTxt = toCamelCase(lastNameTxt);
                 lastNameLbl->setText(lastNameTxt);
+                updLbl(lastNameLbl);
             }
             return;
         }
@@ -589,6 +595,7 @@ void gameWindow::getCharacter(QString c)
             {
                 phoneTxt = phoneTxt.remove(phoneTxt.size()-1,1);
                 phoneLbl->setText(phoneTxt);
+                updLbl(phoneLbl);
             }
             return;
         }
@@ -598,12 +605,13 @@ void gameWindow::getCharacter(QString c)
         }
         else
         {
-            if(phoneTxt.size()<maxNameSize)
+            if(phoneTxt.size()<maxPhoneSize)
             {
                 if (re.exactMatch(c))
                 {
                     phoneTxt.append(c);
                     phoneLbl->setText(phoneTxt);
+                    updLbl(phoneLbl);
                 }
             }
             return;
@@ -623,6 +631,7 @@ void gameWindow::getCharacter(QString c)
             {
                 emailTxt = emailTxt.remove(emailTxt.size()-1,1);
                 emailLbl->setText(emailTxt);
+                updLbl(emailLbl);
             }
             return;
         }
@@ -632,10 +641,11 @@ void gameWindow::getCharacter(QString c)
         }
         else
         {
-            if(emailTxt.size()<maxNameSize)
+            if(emailTxt.size()<maxEmailSize)
             {
                 emailTxt.append(c);
                 emailLbl->setText(emailTxt);
+                updLbl(emailLbl);
             }
             return;
         }
@@ -643,6 +653,21 @@ void gameWindow::getCharacter(QString c)
 
 
 }
+
+
+void gameWindow::updLbl(QLabel *lbl)
+{
+    QFontMetrics metrics(font);
+    QSize size = metrics.size(0, lbl->text()); //Get size of text
+    float factorw = (lbl->width()) / (float)size.width(); //Get the width factor
+    float factorh = (lbl->height()) / (float)size.height(); //Get the height factor
+    float factor = qMin(factorw, factorh); //To fit contents in the screen select as factor
+    //the minimum factor between width and height
+    font.setPointSizeF(font.pointSizeF() * factor); //Set font size*/
+    lbl->setFont(font);
+}
+
+
 
 void gameWindow::getVouchersCount()
 {

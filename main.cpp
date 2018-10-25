@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 
 
     gameWindow *gw = new gameWindow(NULL,PATH);
-    //gw->goSpinWindow();
+   //gw->goSpinWindow();
     gw->start();
 
 

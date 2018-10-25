@@ -70,6 +70,8 @@ private:
     void getPlayers();
     void getVouchersCount();
     void writeVouchersCount();
+    void updLbl(QLabel *lbl);
+
 
     uint voucher100Total,voucher150Total,voucher200Total;
     uint voucher100Given,voucher150Given,voucher200Given;
