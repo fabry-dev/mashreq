@@ -51,7 +51,7 @@
 #define maxEmailSize 30
 
 
-
+#define FONTSIZE 70
 
 QStringList vouchers = QStringList() <<"100"<<"0"<<"150"<<"25"<<"200"<<"50"<<"100"<<"0"<<"150"<<"50"<<"200"<<"100"<<"0"<<"150"<<"25"<<"200";
 
@@ -154,6 +154,7 @@ gameWindow::gameWindow(QWidget *parent, QString PATH):QLabel(parent),PATH(PATH)
         QGraphicsTextItem * wheelText = new QGraphicsTextItem;
         int id2 = QFontDatabase::addApplicationFont(PATH+"Dubai-Bold.ttf");
         font2 = QFont(QFontDatabase::applicationFontFamilies(id2).at(0),70);
+        font2.setPointSizeF((double)FONTSIZE);
         wheelText->setDefaultTextColor ( Qt::white);
         wheelText->setPlainText("AED "+vouchers[i]);
         wheelText->setFont(font2);
@@ -165,6 +166,26 @@ gameWindow::gameWindow(QWidget *parent, QString PATH):QLabel(parent),PATH(PATH)
 
         if(wheelText->y()>((vouchers.size())*(wheelText->boundingRect().height()))/2)
             wheelText->moveBy(0,-((vouchers.size())*(wheelText->boundingRect().height())));
+
+
+        if((wheelText->y()>=-wheelText->boundingRect().height())&&(wheelText->y()<spinScene->height()))
+        {
+            double T = wheelText->boundingRect().height()+spinScene->height();
+
+            double f = abs(sin((double)3.1416*(wheelText->y()+wheelText->boundingRect().height())/T));
+
+
+
+            font2.setPointSizeF((double)FONTSIZE*(1+(2*f-1)/5));
+            wheelText->setFont(font2);
+            wheelText->setPos((spinScene->width()-wheelText->sceneBoundingRect().width())/2,wheelText->y());
+        }
+        else
+        {
+            font2.setPointSizeF((double)FONTSIZE);
+            wheelText->setFont(font2);
+            wheelText->setPos((spinScene->width()-wheelText->sceneBoundingRect().width())/2,wheelText->y());
+        }
 
     }
 
@@ -329,7 +350,7 @@ void gameWindow::startSpin()
     gameState = spinning;
 
     gameAttempts ++;
-    sp->loadFile(PATH+"spinwheel.wav");
+
 
     wheelCount = 0;
 
@@ -354,7 +375,7 @@ void gameWindow::startSpin()
     else
         voucherValue = "200";
 
-    wheelTimer->start(2);
+    wheelTimer->start(1);
 }
 
 void gameWindow::doneSpinning()
@@ -466,26 +487,54 @@ void gameWindow::rotateWheel()
     QString active = "";
     for (auto txt:wheelTexts)
     {
-        txt->moveBy(0,10);
+        txt->moveBy(0,4);
         if(txt->y()>((wheelTexts.size())*(txt->boundingRect().height()))/2)
             txt->moveBy(0,-((wheelTexts.size())*(txt->boundingRect().height())));
 
+        if((txt->y()>=-txt->boundingRect().height())&&(txt->y()<spinScene->height()))
+        {
+            double T = txt->boundingRect().height()+spinScene->height();
 
-        if(abs((txt->y())-(spinScene->height())/2+(txt->boundingRect().height()/2))<3)
+            double f = abs(sin((double)3.1416*(txt->y()+txt->boundingRect().height())/T));
+
+
+
+            font2.setPointSizeF((double)FONTSIZE*(1+(2*f-1)/5));
+            txt->setFont(font2);
+            txt->setPos((spinScene->width()-txt->sceneBoundingRect().width())/2,txt->y());
+        }
+        else
+        {
+            font2.setPointSizeF((double)FONTSIZE);
+            txt->setFont(font2);
+            txt->setPos((spinScene->width()-txt->sceneBoundingRect().width())/2,txt->y());
+        }
+
+
+        if((abs((txt->y())-(spinScene->height())/2+(txt->boundingRect().height()/2))<15))
+        {
             active = txt->toPlainText();
+
+            if(active!=lastActive)
+            {
+                lastActive=active;
+                sp->loadFile(PATH+"top.wav");
+                // qDebug()<<"top"<<active;
+            }
+        }
 
     }
 
     wheelCount++;
 
-    if (wheelCount >  27)
+    if (wheelCount >  50)
     {
         wheelTimer->setInterval(wheelTimer->interval()+1);
         wheelCount = 0;
     }
 
 
-    if((wheelTimer->interval()>8)&&(active == "AED "+voucherValue))
+    if((wheelTimer->interval()>15)&&(active == "AED "+voucherValue))
     {
         sp->stop();
         wheelTimer->stop();
@@ -710,14 +759,14 @@ void gameWindow::getVouchersCount()
         uint voucher200left = voucher200Total-voucher200Given;
         uint vouchersleft = voucher100left+voucher150left+voucher200left;
         qDebug()<<"vouchers left:"<<vouchersleft<<"("<<voucher100left<<voucher150left<<voucher200left<<")";
-         file.close();
-         if(vouchersleft<=0)
-         {
-             qDebug()<<"resetting vouchers count!";
-             voucher100Given=voucher150Given=voucher200Given=0;
-             writeVouchersCount();
+        file.close();
+        if(vouchersleft<=0)
+        {
+            qDebug()<<"resetting vouchers count!";
+            voucher100Given=voucher150Given=voucher200Given=0;
+            writeVouchersCount();
 
-         }
+        }
     }
 
 

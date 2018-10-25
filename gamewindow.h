@@ -58,6 +58,7 @@ private:
     QString voucherValue,firstVoucherValue;
     soundplayer *sp;
     QGraphicsView *spinView ;
+    QString lastActive;
     int gameAttempts;
 
     void getCharacter(QString c);
