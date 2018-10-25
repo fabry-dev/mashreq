@@ -507,7 +507,7 @@ void gameWindow::rotateWheel()
             {
                 lastActive=active;
                 sp->loadFile(PATH+"top.wav");
-                 qDebug()<<"top"<<active;
+                // qDebug()<<"top"<<active;
             }
         }
 
