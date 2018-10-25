@@ -51,7 +51,7 @@
 #define maxEmailSize 30
 
 
-#define FONTSIZE 70
+#define FONTSIZE 60
 
 QStringList vouchers = QStringList() <<"100"<<"0"<<"150"<<"25"<<"200"<<"50"<<"100"<<"0"<<"150"<<"50"<<"200"<<"100"<<"0"<<"150"<<"25"<<"200";
 
@@ -168,24 +168,7 @@ gameWindow::gameWindow(QWidget *parent, QString PATH):QLabel(parent),PATH(PATH)
             wheelText->moveBy(0,-((vouchers.size())*(wheelText->boundingRect().height())));
 
 
-        if((wheelText->y()>=-wheelText->boundingRect().height())&&(wheelText->y()<spinScene->height()))
-        {
-            double T = wheelText->boundingRect().height()+spinScene->height();
-
-            double f = abs(sin((double)3.1416*(wheelText->y()+wheelText->boundingRect().height())/T));
-
-
-
-            font2.setPointSizeF((double)FONTSIZE*(1+(2*f-1)/5));
-            wheelText->setFont(font2);
-            wheelText->setPos((spinScene->width()-wheelText->sceneBoundingRect().width())/2,wheelText->y());
-        }
-        else
-        {
-            font2.setPointSizeF((double)FONTSIZE);
-            wheelText->setFont(font2);
-            wheelText->setPos((spinScene->width()-wheelText->sceneBoundingRect().width())/2,wheelText->y());
-        }
+        rotationEffect(wheelText);
 
     }
 
@@ -365,9 +348,6 @@ void gameWindow::startSpin()
     int val = qrand()%vouchersleft;
 
 
-
-
-
     if(val < voucher100left)
         voucherValue = "100";
     else if(val <voucher100left+voucher150left)
@@ -375,6 +355,7 @@ void gameWindow::startSpin()
     else
         voucherValue = "200";
 
+   // voucherValue = "100";
     wheelTimer->start(1);
 }
 
@@ -482,6 +463,29 @@ void gameWindow::sendSms()
 
 }
 
+
+void gameWindow::rotationEffect(QGraphicsTextItem *txt)
+{
+
+    if((txt->y()>=-txt->boundingRect().height())&&(txt->y()<spinScene->height()))
+    {
+        double T = txt->boundingRect().height()+spinScene->height();
+        double f = abs(sin((double)3.1416*(txt->y()+txt->boundingRect().height())/T));
+
+        int h0 = txt->sceneBoundingRect().height();
+        font2.setPointSizeF((double)FONTSIZE*(1+f/3));
+        txt->setFont(font2);
+        txt->setPos((spinScene->width()-txt->sceneBoundingRect().width())/2,txt->y());
+
+    }
+    else
+    {
+        font2.setPointSizeF((double)FONTSIZE);
+        txt->setFont(font2);
+        txt->setPos((spinScene->width()-txt->sceneBoundingRect().width())/2,txt->y());
+    }
+}
+
 void gameWindow::rotateWheel()
 {
     QString active = "";
@@ -491,27 +495,10 @@ void gameWindow::rotateWheel()
         if(txt->y()>((wheelTexts.size())*(txt->boundingRect().height()))/2)
             txt->moveBy(0,-((wheelTexts.size())*(txt->boundingRect().height())));
 
-        if((txt->y()>=-txt->boundingRect().height())&&(txt->y()<spinScene->height()))
-        {
-            double T = txt->boundingRect().height()+spinScene->height();
-
-            double f = abs(sin((double)3.1416*(txt->y()+txt->boundingRect().height())/T));
+        rotationEffect(txt);
 
 
-
-            font2.setPointSizeF((double)FONTSIZE*(1+(2*f-1)/5));
-            txt->setFont(font2);
-            txt->setPos((spinScene->width()-txt->sceneBoundingRect().width())/2,txt->y());
-        }
-        else
-        {
-            font2.setPointSizeF((double)FONTSIZE);
-            txt->setFont(font2);
-            txt->setPos((spinScene->width()-txt->sceneBoundingRect().width())/2,txt->y());
-        }
-
-
-        if((abs((txt->y())-(spinScene->height())/2+(txt->boundingRect().height()/2))<15))
+        if((abs((txt->y())-(spinScene->height())/2+(txt->boundingRect().height()/2))<5))
         {
             active = txt->toPlainText();
 

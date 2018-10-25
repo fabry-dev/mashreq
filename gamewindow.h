@@ -72,7 +72,7 @@ private:
     void getVouchersCount();
     void writeVouchersCount();
     void updLbl(QLabel *lbl);
-
+    void rotationEffect(QGraphicsTextItem *txt);
 
     uint voucher100Total,voucher150Total,voucher200Total;
     uint voucher100Given,voucher150Given,voucher200Given;
