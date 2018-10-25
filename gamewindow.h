@@ -53,6 +53,8 @@ private:
     QLabel *firstNameLbl,*lastNameLbl,*phoneLbl,*emailLbl,*prizeLbl;
     QGraphicsScene * spinScene;
     std::vector <QGraphicsTextItem *> wheelTexts;
+    std::vector <QRectF> wheelRects;
+
     QTimer *wheelTimer;
     ulong wheelCount;
     QString voucherValue,firstVoucherValue;
@@ -63,7 +65,7 @@ private:
 
     void getCharacter(QString c);
 
-    void startSpin();
+
     void endGame();
     void initDb();
     void createTable();
@@ -72,7 +74,7 @@ private:
     void getVouchersCount();
     void writeVouchersCount();
     void updLbl(QLabel *lbl);
-    void rotationEffect(QGraphicsTextItem *txt);
+    void rotationEffect(QGraphicsTextItem *txt, QRectF *rect);
 
     uint voucher100Total,voucher150Total,voucher200Total;
     uint voucher100Given,voucher150Given,voucher200Given;
@@ -86,6 +88,7 @@ protected:
 private slots:
     void doneSpinning();
     void rotateWheel();
+    void startSpin();
 
 public slots:
     void start();

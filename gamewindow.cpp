@@ -147,8 +147,6 @@ gameWindow::gameWindow(QWidget *parent, QString PATH):QLabel(parent),PATH(PATH)
     spinView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     spinView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-
-
     for(int i = 0;i<vouchers.size();i++)
     {
         QGraphicsTextItem * wheelText = new QGraphicsTextItem;
@@ -167,16 +165,21 @@ gameWindow::gameWindow(QWidget *parent, QString PATH):QLabel(parent),PATH(PATH)
         if(wheelText->y()>((vouchers.size())*(wheelText->boundingRect().height()))/2)
             wheelText->moveBy(0,-((vouchers.size())*(wheelText->boundingRect().height())));
 
+        QRectF r = QRectF(wheelText->pos(),wheelText->boundingRect().size());
 
-        rotationEffect(wheelText);
 
+
+
+
+        wheelRects.push_back(r);
+
+
+
+       rotationEffect(wheelText,&r);
     }
-
 
     wheelTimer = new QTimer(this);
     connect(wheelTimer,SIGNAL(timeout()),this,SLOT(rotateWheel()));
-
-
 }
 
 
@@ -355,8 +358,21 @@ void gameWindow::startSpin()
     else
         voucherValue = "200";
 
+
+
    // voucherValue = "100";
+
+
+
+
+
+
+
     wheelTimer->start(1);
+
+
+
+
 }
 
 void gameWindow::doneSpinning()
@@ -419,6 +435,157 @@ void gameWindow::endGame()
     QTimer::singleShot(10000,this,SLOT(start()));
 }
 
+void gameWindow::rotationEffect(QGraphicsTextItem *txt,QRectF* rect)
+{
+
+   //txt->setPos(rect->topLeft());
+
+
+    if((txt->y()>=-txt->boundingRect().height())&&(txt->y()<spinScene->height()))
+    {
+        double T = txt->boundingRect().height()+spinScene->height();
+        double f = abs(sin((double)3.1416*(txt->y()+txt->boundingRect().height())/T));
+
+        int h0 = txt->sceneBoundingRect().height();
+        font2.setPointSizeF((double)FONTSIZE*(0.5+f));
+        txt->setFont(font2);
+
+        float y2 = rect->y()+(rect->height()-txt->boundingRect().height())/2;
+
+        txt->setPos((spinScene->width()-txt->sceneBoundingRect().width())/2,y2);
+       // txt->setPos(rect->topLeft());
+    }
+    else
+    {
+        font2.setPointSizeF((double)FONTSIZE);
+        txt->setFont(font2);
+
+    }
+}
+
+
+
+
+
+
+
+
+
+void gameWindow::rotateWheel()
+{
+    QString active = "";
+
+
+    for(int i = 0;i<wheelRects.size();i++)
+    {
+        QRectF *rect=&(wheelRects[i]);
+        QGraphicsTextItem * txt = wheelTexts[i];
+
+        rect->moveTo(QPoint(rect->x(),rect->y()+4));
+
+        if(rect->y()>((wheelRects.size())*(rect->height()))/2)
+            rect->moveTo(QPoint(rect->x(),rect->y()-((wheelRects.size())*(rect->height()))));
+
+
+
+
+
+
+
+        //txt->boundingRect().moveTo(rect->topLeft());
+        txt->setPos(rect->topLeft());
+
+        rotationEffect(txt,rect);
+
+
+        if((abs((rect->y())-(spinScene->height())/2+(rect->height()/2))<8))
+        {
+            active = txt->toPlainText();
+
+            if(active!=lastActive)
+            {
+                lastActive=active;
+                sp->loadFile(PATH+"top.wav");
+                // qDebug()<<"top"<<active;
+            }
+        }
+
+
+
+
+    }
+
+
+   //qDebug()<<wheelTexts[0]->boundingRect();
+
+
+
+    for (auto txt:wheelTexts)
+    {
+        /*txt->moveBy(0,4);
+        if(txt->y()>((wheelTexts.size())*(txt->boundingRect().height()))/2)
+            txt->moveBy(0,-((wheelTexts.size())*(txt->boundingRect().height())));
+        */
+
+
+/*
+
+        rotationEffect(txt);
+
+
+        if((abs((txt->y())-(spinScene->height())/2+(txt->boundingRect().height()/2))<5))
+        {
+            active = txt->toPlainText();
+
+            if(active!=lastActive)
+            {
+                lastActive=active;
+                sp->loadFile(PATH+"top.wav");
+                // qDebug()<<"top"<<active;
+            }
+        }
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+    wheelCount++;
+
+    if (wheelCount >  50)
+    {
+        wheelTimer->setInterval(wheelTimer->interval()+1);
+        wheelCount = 0;
+    }
+
+
+    if((wheelTimer->interval()>15)&&(active == "AED "+voucherValue))
+    {
+        sp->stop();
+        wheelTimer->stop();
+        QTimer::singleShot(2000,this,SLOT(doneSpinning()));
+        //QTimer::singleShot(2000,this,SLOT(startSpin()));
+    }
+}
+
+
+
+
+
+
+
+
+
 void gameWindow::sendSms()
 {
     CURL *curl;
@@ -464,70 +631,16 @@ void gameWindow::sendSms()
 }
 
 
-void gameWindow::rotationEffect(QGraphicsTextItem *txt)
-{
-
-    if((txt->y()>=-txt->boundingRect().height())&&(txt->y()<spinScene->height()))
-    {
-        double T = txt->boundingRect().height()+spinScene->height();
-        double f = abs(sin((double)3.1416*(txt->y()+txt->boundingRect().height())/T));
-
-        int h0 = txt->sceneBoundingRect().height();
-        font2.setPointSizeF((double)FONTSIZE*(1+f/3));
-        txt->setFont(font2);
-        txt->setPos((spinScene->width()-txt->sceneBoundingRect().width())/2,txt->y());
-
-    }
-    else
-    {
-        font2.setPointSizeF((double)FONTSIZE);
-        txt->setFont(font2);
-        txt->setPos((spinScene->width()-txt->sceneBoundingRect().width())/2,txt->y());
-    }
-}
-
-void gameWindow::rotateWheel()
-{
-    QString active = "";
-    for (auto txt:wheelTexts)
-    {
-        txt->moveBy(0,4);
-        if(txt->y()>((wheelTexts.size())*(txt->boundingRect().height()))/2)
-            txt->moveBy(0,-((wheelTexts.size())*(txt->boundingRect().height())));
-
-        rotationEffect(txt);
 
 
-        if((abs((txt->y())-(spinScene->height())/2+(txt->boundingRect().height()/2))<5))
-        {
-            active = txt->toPlainText();
-
-            if(active!=lastActive)
-            {
-                lastActive=active;
-                sp->loadFile(PATH+"top.wav");
-                // qDebug()<<"top"<<active;
-            }
-        }
-
-    }
-
-    wheelCount++;
-
-    if (wheelCount >  50)
-    {
-        wheelTimer->setInterval(wheelTimer->interval()+1);
-        wheelCount = 0;
-    }
 
 
-    if((wheelTimer->interval()>15)&&(active == "AED "+voucherValue))
-    {
-        sp->stop();
-        wheelTimer->stop();
-        QTimer::singleShot(2000,this,SLOT(doneSpinning()));
-    }
-}
+
+
+
+
+
+
 
 void gameWindow::getCharacter(QString c)
 {
