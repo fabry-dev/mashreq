@@ -610,7 +610,7 @@ void gameWindow::sendSms()
 
         QString str;
         char *s;
-        str = "action=sendsms&user=2q6c96fp&password=iXEFANhW&from=Mashreq Neo&to="+phoneTxt+"&text="+text+"&maxsplit=400";
+        str = "action=sendsms&user=2q6c96fp&password=iXEFANhW&from=MASHREQ NEO&to="+phoneTxt+"&text="+text+"&maxsplit=400";
         s=(char *)malloc(str.length());
         QByteArray ba=str.toLatin1();  // str is my json input data
         strcpy(s,ba.data());
