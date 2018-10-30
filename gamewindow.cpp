@@ -703,6 +703,10 @@ void gameWindow::getCharacter(QString c)
                 lastNameLbl->setText(lastNameTxt);
                 updLbl(lastNameLbl);
             }
+            else
+            {
+                gameState = inputFirstName;
+            }
             return;
         }
         else if(c == "SPACE")
@@ -747,6 +751,11 @@ void gameWindow::getCharacter(QString c)
                 phoneLbl->setText(phoneTxt);
                 updLbl(phoneLbl);
             }
+            else
+            {
+
+                gameState = inputLastName;
+            }
             return;
         }
         else if(c == "SPACE")
@@ -783,6 +792,11 @@ void gameWindow::getCharacter(QString c)
                 emailLbl->setText(emailTxt);
                 updLbl(emailLbl);
             }
+            else
+            {
+                gameState = inputPhone;
+
+            }
             return;
         }
         else if(c == "SPACE")
@@ -816,6 +830,7 @@ void gameWindow::updLbl(QLabel *lbl)
     font.setPointSizeF(font.pointSizeF() * factor); //Set font size*/
     lbl->setFont(font);
 }
+
 
 
 
