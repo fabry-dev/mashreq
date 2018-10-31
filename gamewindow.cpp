@@ -45,8 +45,8 @@
 
 #define minNameSize 3
 #define maxNameSize 20
-#define minPhoneSize 8
-#define maxPhoneSize 16
+#define minPhoneSize 13
+#define maxPhoneSize 13
 #define minEmailSize 5
 #define maxEmailSize 30
 
@@ -289,7 +289,7 @@ void gameWindow::goRegister()
 
     firstNameTxt="";
     lastNameTxt="";
-    phoneTxt="+";
+    phoneTxt="+971";
     emailTxt="";
 
 
@@ -735,7 +735,7 @@ void gameWindow::getCharacter(QString c)
     {
         if(c == "PLAY")
         {
-            if(phoneTxt.size()>minPhoneSize)
+            if(phoneTxt.size()>=minPhoneSize)
 
             {
                 gameState = inputEmail;
@@ -745,7 +745,7 @@ void gameWindow::getCharacter(QString c)
         }
         else if(c == "BACK")
         {
-            if(phoneTxt.size()>1)
+            if(phoneTxt.size()>4)
             {
                 phoneTxt = phoneTxt.remove(phoneTxt.size()-1,1);
                 phoneLbl->setText(phoneTxt);
